@@ -1,4 +1,11 @@
-<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+<div>First line is: {{ dataSource.data[0].name }}</div>
+
+<mat-tree
+  [dataSource]="dataSource"
+  [treeControl]="treeControl"
+  [trackBy]="trackBy"
+  s
+>
   <!-- This is the tree node template for leaf nodes -->
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
     <!-- use a disabled button to provide padding for tree leaf -->

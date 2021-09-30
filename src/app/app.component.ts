@@ -1,16 +1,18 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, VERSION } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   MatTreeFlatDataSource,
   MatTreeFlattener,
 } from '@angular/material/tree';
 
 interface FoodNode {
+  id: number;
   name: string;
   children?: FoodNode[];
 }
 
 interface ExampleFlatNode {
+  id: number;
   expandable: boolean;
   name: string;
   level: number;
@@ -18,19 +20,18 @@ interface ExampleFlatNode {
 
 const TREE_DATA: FoodNode[] = [
   {
+    id: 1,
     name: 'Fruit',
-    children: [{ name: 'Apple' }, { name: 'Banana' }, { name: 'Fruit loops' }],
+    children: [],
   },
   {
+    id: 2,
     name: 'Vegetables',
     children: [
       {
+        id: 3,
         name: 'Green',
-        children: [{ name: 'Broccoli' }, { name: 'Brussels sprouts' }],
-      },
-      {
-        name: 'Orange',
-        children: [{ name: 'Pumpkins' }, { name: 'Carrots' }],
+        children: [],
       },
     ],
   },
@@ -42,8 +43,9 @@ const TREE_DATA: FoodNode[] = [
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  private _transformer = (node: FoodNode, level: number) => {
+  private _transformer = (node: FoodNode, level: number): ExampleFlatNode => {
     return {
+      id: node.id,
       expandable: !!node.children && node.children.length > 0,
       name: node.name,
       level: level,
@@ -64,9 +66,25 @@ export class AppComponent {
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-  hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
-
   constructor() {
     this.dataSource.data = TREE_DATA;
+  }
+
+  ngOnInit(): void {
+    let i = 0;
+    const loop = () => {
+      TREE_DATA[0].name = 'Fruit' + String.fromCharCode(65 + (i++ % 26));
+      this.dataSource.data = TREE_DATA;
+      setTimeout(() => loop(), 1000);
+    };
+    loop();
+  }
+
+  hasChild(_: number, node: ExampleFlatNode): boolean {
+    return node.expandable;
+  }
+
+  trackBy(_: number, node: ExampleFlatNode): number {
+    return node.id;
   }
 }
