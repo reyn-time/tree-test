@@ -74,6 +74,13 @@ export class AppComponent {
     let i = 0;
     const loop = () => {
       TREE_DATA[0].name = 'Fruit' + String.fromCharCode(65 + (i++ % 26));
+
+      // Workaround 1: Empty the dataSource
+      // this.dataSource.data = [];
+
+      // Workaround 2: Change the trackBy id
+      // TREE_DATA[0].id = Math.random();
+
       this.dataSource.data = TREE_DATA;
       setTimeout(() => loop(), 1000);
     };
