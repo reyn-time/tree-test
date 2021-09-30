@@ -43,13 +43,38 @@ const TREE_DATA: FoodNode[] = [
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  private map: Map<number, ExampleFlatNode> = new Map();
+
+  // Seems to be important to keep the original flatNode reference here.
+  // Otherwise the DOM cannot update properly
   private _transformer = (node: FoodNode, level: number): ExampleFlatNode => {
-    return {
-      id: node.id,
-      expandable: !!node.children && node.children.length > 0,
-      name: node.name,
-      level: level,
-    };
+    // The following block will fail terribly.
+    // return {
+    //   id: node.id,
+    //   expandable: !!node.children && node.children.length > 0,
+    //   name: node.name,
+    //   level: level,
+    // };
+
+    let flatNode: ExampleFlatNode;
+
+    if (this.map.has(node.id)) {
+      flatNode = this.map.get(node.id);
+      flatNode.id = node.id;
+      flatNode.expandable = !!node.children && node.children.length > 0;
+      flatNode.name = node.name;
+      flatNode.level = level;
+    } else {
+      flatNode = {
+        id: node.id,
+        expandable: !!node.children && node.children.length > 0,
+        name: node.name,
+        level: level,
+      };
+    }
+
+    this.map.set(node.id, flatNode);
+    return flatNode;
   };
 
   treeControl = new FlatTreeControl<ExampleFlatNode>(
@@ -73,7 +98,10 @@ export class AppComponent {
   ngOnInit(): void {
     let i = 0;
     const loop = () => {
-      TREE_DATA[0].name = 'Fruit ' + String.fromCharCode(65 + (i++ % 26));
+      TREE_DATA[0] = {
+        name: 'Fruit ' + String.fromCharCode(65 + (i++ % 26)),
+        id: 1,
+      };
 
       // Workaround 1: Empty the dataSource
       // this.dataSource.data = [];
