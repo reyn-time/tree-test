@@ -73,7 +73,7 @@ export class AppComponent {
   ngOnInit(): void {
     let i = 0;
     const loop = () => {
-      TREE_DATA[0].name = 'Fruit' + String.fromCharCode(65 + (i++ % 26));
+      TREE_DATA[0].name = 'Fruit ' + String.fromCharCode(65 + (i++ % 26));
 
       // Workaround 1: Empty the dataSource
       // this.dataSource.data = [];
